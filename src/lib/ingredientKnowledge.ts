@@ -1,31 +1,79 @@
-export const INGREDIENT_KNOWLEDGE: Record<string, string> = {
-  "palm oil":
-    "Palm oil improves texture and shelf life. The trade-off is higher saturated fat content, which may affect heart health if consumed frequently.",
+import { useState } from "react";
 
-  "refined sugar":
-    "Refined sugar enhances taste but can cause blood sugar spikes. Occasional intake is fine; regular excess is the concern.",
+export function useIngredientAnalysis() {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  "artificial flavors":
-    "Artificial flavors help maintain consistent taste. Long-term effects vary by individual sensitivity.",
+  const analyzeIngredients = async (
+    ingredients: string,
+    productName?: string
+  ) => {
+    setLoading(true);
+    setError(null);
 
-  "preservatives":
-    "Preservatives extend shelf life. Approved ones are considered safe in regulated quantities.",
+    try {
+      const text = ingredients.toLowerCase();
+      let insights: string[] = [];
 
-  "emulsifiers":
-    "Emulsifiers keep ingredients mixed evenly. Research on gut impact is ongoing, so moderation matters.",
+      if (text.includes("palm oil")) {
+        insights.push(
+          "Palm oil improves shelf life but is high in saturated fat and linked to environmental concerns."
+        );
+      }
 
-  "high fructose corn syrup":
-    "HFCS provides sweetness at low cost but is linked to metabolic issues when overconsumed.",
+      if (text.includes("refined sugar")) {
+        insights.push(
+          "Refined sugar enhances taste but can spike blood sugar and offers little nutrition."
+        );
+      }
 
-  "hydrogenated oil":
-    "Hydrogenated oils improve stability but may contain trans fats, which are harmful to heart health.",
+      if (text.includes("emulsifier")) {
+        insights.push(
+          "Emulsifiers help texture but may indicate ultra-processed food."
+        );
+      }
 
-  "soy lecithin":
-    "Soy lecithin improves texture and consistency. Generally safe, but may concern soy-sensitive individuals.",
+      if (text.includes("artificial flavor")) {
+        insights.push(
+          "Artificial flavors provide consistency but reduce ingredient transparency."
+        );
+      }
 
-  "food color":
-    "Food colors improve appearance. Some people prefer natural alternatives due to sensitivity concerns.",
+      if (insights.length === 0) {
+        const fallback =
+          "No known ingredients detected from the supported set. Impact depends on quantity and frequency.";
+        setResult(fallback);
+        return fallback;
+      }
 
-  "flavor enhancers":
-    "Flavor enhancers amplify taste perception. Effects vary depending on frequency and individual tolerance."
-};
+      const finalText = `
+Product: ${productName || "Unknown"}
+
+Key insights:
+${insights.map((i) => `• ${i}`).join("\n")}
+
+Uncertainty:
+Health effects depend on overall diet, quantity, and individual sensitivity.
+      `.trim();
+
+      setResult(finalText);
+      return finalText;
+    } catch (err) {
+      console.error(err);
+      setError("Failed to analyze ingredients");
+      setResult("Something went wrong while analyzing.");
+      return;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    analyzeIngredients,
+    loading,
+    result,
+    error,
+  };
+}
+
