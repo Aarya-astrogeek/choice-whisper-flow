@@ -74,20 +74,7 @@ This shifts the AI from a lookup tool to a reasoning interface.
 
 ---
 
-## UI Preview
 
-### Home and Input Experience
-![Home Screen](./assets/ui-home.png)
-
-### Voice Ingredient Input
-![Voice Input](./assets/ui-voice.png)
-
-### Ingredient Analysis Result
-![Analysis Result](./assets/ui-analysis.png)
-
-> Place screenshots inside an `/assets` folder at the root of the repository.
-
----
 
 ## How It Works (High Level)
 
@@ -98,58 +85,14 @@ This shifts the AI from a lookup tool to a reasoning interface.
 
 ---
 
-## Architecture Overview
 
 
 
-Frontend
-└── React (Lovable-generated UI)
-├── Text Input Panel
-├── Voice Input Integration
-├── Image Upload Panel
-└── Result Explanation Cards
-
-Backend
-└── LLM-powered reasoning engine
-├── Context inference
-├── Explanation structuring
-└── Follow-up conversation handling
 
 
 
-No large-scale datasets.  
-No OCR optimization.  
-No scraping pipelines.
-
----
-
-## Code Structure
 
 
-
-src/
-├── components/
-│   ├── AnalysisInput.tsx
-│   ├── TextInputPanel.tsx
-│   ├── ImageUploadPanel.tsx
-│   ├── ProductSearchPanel.tsx
-│   └── AnalysisResultCard.tsx
-├── pages/
-│   └── Index.tsx
-├── hooks/
-│   ├── useIngredientAnalysis.ts
-│   └── useAnalysisHistory.ts
-└── main.tsx
-
-`
-
----
-
-## Running Locally
-
-### Requirements
-- Node.js 16+
-- LLM API key (e.g., Groq)
 
 
 
@@ -168,8 +111,8 @@ Choice Whisper Flow explores **new interaction paradigms** where AI removes comp
 
 ## Demo
 
-Live App: [https://choice-whisper-flow.vercel.app/](https://choice-whisper-flow.vercel.app/)
-Demo Video: Add link here
+*Live App: [https://choice-whisper-flow.vercel.app/](https://choice-whisper-flow.vercel.app/)
+*Demo Video:https://drive.google.com/file/d/1LKzfENcCtSADMuKiztlPyT-QhsPXj4_r/view?usp=drive_link
 
 
 ---
