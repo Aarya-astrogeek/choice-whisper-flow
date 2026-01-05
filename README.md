@@ -52,7 +52,6 @@ This keeps the interaction human, flexible, and low-friction, while still person
 ### Intent-First Interaction
 Users provide minimal input via:
 - Text
-- Voice
 - Image
 
 The system infers what the user likely cares about without requiring:
