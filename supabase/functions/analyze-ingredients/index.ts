@@ -5,6 +5,19 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+interface PreviousAnalysis {
+  verdict: string;
+  whatStoodOut: string;
+  whyMatters: string;
+  whatsUncertain: string;
+  bottomLine: string;
+}
+
+interface ConversationHistoryItem {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 interface AnalysisRequest {
   ingredients: string;
   productName?: string;
@@ -13,6 +26,10 @@ interface AnalysisRequest {
     allergies: string[];
     preferences: string[];
   };
+  // For conversation continuity
+  followUp?: string;
+  previousAnalysis?: PreviousAnalysis;
+  conversationHistory?: ConversationHistoryItem[];
 }
 
 serve(async (req) => {
@@ -21,7 +38,14 @@ serve(async (req) => {
   }
 
   try {
-    const { ingredients, productName, dietaryProfile } = await req.json() as AnalysisRequest;
+    const { 
+      ingredients, 
+      productName, 
+      dietaryProfile,
+      followUp,
+      previousAnalysis,
+      conversationHistory = []
+    } = await req.json() as AnalysisRequest;
     
     if (!ingredients || ingredients.trim().length === 0) {
       return new Response(
@@ -39,7 +63,40 @@ serve(async (req) => {
       );
     }
 
-    const systemPrompt = `You are an AI-native ingredient understanding copilot for food & beverages.
+    // Check if this is a follow-up question
+    const isFollowUp = !!followUp && !!previousAnalysis;
+
+    const systemPrompt = isFollowUp 
+      ? `You are an AI-native ingredient understanding copilot for food & beverages.
+
+You are in a follow-up conversation about a specific product's ingredients. Your job is to answer questions, provide clarifications, and help the user understand the ingredients better.
+
+CRITICAL RULES:
+- ONLY reference the ingredients from the original analysis
+- DO NOT introduce new products or ingredients not in the original list
+- Treat all follow-up questions as clarifications about the SAME product
+- Reference your previous reasoning when relevant
+- Be concise and direct
+
+${dietaryProfile ? `
+User's dietary profile:
+- Restrictions: ${dietaryProfile.restrictions.join(', ') || 'None'}
+- Allergies: ${dietaryProfile.allergies.join(', ') || 'None'}
+- Preferences: ${dietaryProfile.preferences.join(', ') || 'None'}
+` : ''}
+
+Original Product: ${productName || 'Not specified'}
+Original Ingredients: ${ingredients}
+
+Your Previous Analysis:
+- Verdict: ${previousAnalysis?.verdict}
+- What Stood Out: ${previousAnalysis?.whatStoodOut}
+- Why This Matters: ${previousAnalysis?.whyMatters}
+- What's Uncertain: ${previousAnalysis?.whatsUncertain}
+- Bottom Line: ${previousAnalysis?.bottomLine}
+
+Answer the user's follow-up question based ONLY on this context. Be helpful, specific, and reference the actual ingredients when relevant.`
+      : `You are an AI-native ingredient understanding copilot for food & beverages.
 
 Your job is to reduce cognitive load at decision time. Given ingredient lists, you provide clear, actionable analysis.
 
@@ -68,11 +125,26 @@ Verdict meanings:
 
 Be direct, practical, and honest about uncertainty. Focus on what the user needs to know to make a decision.`;
 
-    const userPrompt = productName 
-      ? `Analyze these ingredients from "${productName}":\n\n${ingredients}`
-      : `Analyze these ingredients:\n\n${ingredients}`;
+    // Build messages array
+    const messages: Array<{ role: string; content: string }> = [
+      { role: 'system', content: systemPrompt }
+    ];
 
-    console.log('Sending request to Lovable AI...');
+    if (isFollowUp) {
+      // Add conversation history for context
+      for (const msg of conversationHistory) {
+        messages.push({ role: msg.role, content: msg.content });
+      }
+      // Add the new follow-up question
+      messages.push({ role: 'user', content: followUp });
+    } else {
+      const userPrompt = productName 
+        ? `Analyze these ingredients from "${productName}":\n\n${ingredients}`
+        : `Analyze these ingredients:\n\n${ingredients}`;
+      messages.push({ role: 'user', content: userPrompt });
+    }
+
+    console.log('Sending request to Lovable AI...', { isFollowUp, messageCount: messages.length });
     
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -82,11 +154,8 @@ Be direct, practical, and honest about uncertainty. Focus on what the user needs
       },
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        response_format: { type: "json_object" }
+        messages,
+        ...(isFollowUp ? {} : { response_format: { type: "json_object" } })
       }),
     });
 
@@ -126,8 +195,17 @@ Be direct, practical, and honest about uncertainty. Focus on what the user needs
       );
     }
 
-    console.log('AI response received:', content);
+    console.log('AI response received:', content.substring(0, 100));
 
+    // For follow-up questions, return the response as text
+    if (isFollowUp) {
+      return new Response(
+        JSON.stringify({ response: content }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // For initial analysis, parse as JSON
     let analysis;
     try {
       analysis = JSON.parse(content);

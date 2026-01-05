@@ -1,14 +1,24 @@
-import { AnalysisResult } from '@/types/analysis';
+import { AnalysisResult, ConversationMessage } from '@/types/analysis';
 import { VerdictBadge } from './VerdictBadge';
+import { ConversationChat } from './ConversationChat';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Lightbulb, HelpCircle, Target, Zap } from 'lucide-react';
+import { Lightbulb, HelpCircle, Target, Zap, MessageCircle } from 'lucide-react';
 
 interface AnalysisResultCardProps {
   result: AnalysisResult;
   productName?: string;
+  conversation?: ConversationMessage[];
+  onSendFollowUp?: (message: string) => Promise<void>;
+  isConversing?: boolean;
 }
 
-export function AnalysisResultCard({ result, productName }: AnalysisResultCardProps) {
+export function AnalysisResultCard({ 
+  result, 
+  productName,
+  conversation = [],
+  onSendFollowUp,
+  isConversing = false,
+}: AnalysisResultCardProps) {
   return (
     <Card className="overflow-hidden animate-fade-in shadow-lg">
       <CardHeader className="gradient-hero border-b border-border">
@@ -52,6 +62,21 @@ export function AnalysisResultCard({ result, productName }: AnalysisResultCardPr
             highlight
           />
         </div>
+
+        {/* Conversation Section */}
+        {onSendFollowUp && (
+          <div className="border-t border-border">
+            <div className="px-5 py-3 bg-muted/30 flex items-center gap-2">
+              <MessageCircle size={16} className="text-primary" />
+              <span className="text-sm font-medium text-foreground">Follow-up Questions</span>
+            </div>
+            <ConversationChat
+              messages={conversation}
+              onSendMessage={onSendFollowUp}
+              isLoading={isConversing}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

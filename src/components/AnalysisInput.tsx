@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { InputMethod, DietaryProfile } from '@/types/analysis';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InputMethodTabs } from './InputMethodTabs';
@@ -17,7 +17,16 @@ export function AnalysisInput({ activeProfile }: AnalysisInputProps) {
   const [inputMethod, setInputMethod] = useState<InputMethod>('text');
   const [productName, setProductName] = useState<string | undefined>();
   
-  const { analyzing, result, analyzeIngredients, extractFromImage, clearResult } = useIngredientAnalysis();
+  const { 
+    analyzing, 
+    conversing,
+    result, 
+    session,
+    analyzeIngredients, 
+    sendFollowUp,
+    extractFromImage, 
+    clearResult 
+  } = useIngredientAnalysis();
   const { saveAnalysis } = useAnalysisHistory();
 
   const handleAnalyze = async (ingredients: string, name?: string) => {
@@ -27,6 +36,10 @@ export function AnalysisInput({ activeProfile }: AnalysisInputProps) {
       await saveAnalysis(ingredients, analysisResult, name);
     }
   };
+
+  const handleFollowUp = useCallback(async (message: string) => {
+    await sendFollowUp(message, activeProfile);
+  }, [sendFollowUp, activeProfile]);
 
   const handleMethodChange = (method: InputMethod) => {
     setInputMethod(method);
@@ -66,7 +79,13 @@ export function AnalysisInput({ activeProfile }: AnalysisInputProps) {
       </Card>
 
       {result && (
-        <AnalysisResultCard result={result} productName={productName} />
+        <AnalysisResultCard 
+          result={result} 
+          productName={productName}
+          conversation={session?.conversation}
+          onSendFollowUp={handleFollowUp}
+          isConversing={conversing}
+        />
       )}
     </div>
   );
