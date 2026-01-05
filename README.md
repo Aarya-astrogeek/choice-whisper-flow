@@ -32,9 +32,35 @@ No filters. No forms. No ingredient encyclopedias.
 ## Core Features
 
 ### Voice-First Ingredient Input
-Users can speak ingredients naturally using a built-in voice interface.  
-Speech is transcribed and directly injected into the analysis flow, reducing friction in real-world scenarios like shopping or cooking.
+Instead of forcing users to configure complex dietary settings or rigid filters, the system builds a soft dietary profile over time based on how the user reacts and asks follow-up questions.
 
+Users can optionally state preferences like:
+
+“I avoid palm oil”
+
+“I’m okay with sugar occasionally”
+
+“I care more about additives than calories”
+
+These signals are inferred from conversation, not selected from checkboxes.
+
+The profile acts as a contextual lens, subtly shaping explanations:
+
+What risks are emphasized
+
+Which trade-offs are highlighted
+
+How cautious or permissive the guidance sounds
+
+Importantly:
+
+No permanent medical claims are stored
+
+No hard exclusions are enforced
+
+Users can override or ignore suggestions at any time
+
+This keeps the interaction human, flexible, and low-friction, while still personalizing reasoning — aligning with the goal of using less data well rather than more data poorly
 ---
 
 ### Intent-First Interaction
