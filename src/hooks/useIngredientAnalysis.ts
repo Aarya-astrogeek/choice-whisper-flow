@@ -1,147 +1,69 @@
 import { useState } from "react";
-import { AnalysisResult, ConversationMessage } from "@/types";
 
-const BACKEND_URL = "https://backend-whisperflow.onrender.com/chat";
+interface AnalysisResult {
+  role: "assistant";
+  content: string;
+}
 
 export function useIngredientAnalysis() {
-  const [analyzing, setAnalyzing] = useState(false);
-  const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [conversation, setConversation] = useState<ConversationMessage[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // =========================
-  // MAIN INGREDIENT ANALYSIS
-  // =========================
   const analyzeIngredients = async (
     ingredients: string,
-    productName?: string,
-    dietaryProfile?: any
+    productName?: string
   ) => {
-    setAnalyzing(true);
+    setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(BACKEND_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: "user",
-              content: `
-You are a food ingredient analyst.
+      const response = await fetch(
+        "https://backend-whisperflow.onrender.com/chat",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: `
+Product: ${productName || "Unknown"}
+Ingredients: ${ingredients}
 
-Product name: ${productName || "Unknown"}
-Ingredients list: ${ingredients}
-
-User dietary preferences:
-${dietaryProfile ? JSON.stringify(dietaryProfile) : "None"}
-
-Give a clear, consumer-friendly verdict.
-Avoid listing every ingredient.
-Focus on safety, red flags, and dietary compatibility.
-              `,
-            },
-          ],
-        }),
-      });
+Explain what matters, trade-offs, and uncertainty.
+Do not list ingredients.
+                `,
+              },
+            ],
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Backend analysis failed");
+        throw new Error("Backend error");
       }
 
-      const data = await response.json();
-
-      const analysisResult: AnalysisResult = {
-        verdict: data.content,
-        whatStoodOut: "",
-        whyMatters: "",
-        whatsUncertain: "",
-        bottomLine: "",
-      };
-
-      setResult(analysisResult);
-
-      setConversation([
-        {
-          role: "user",
-          content: ingredients,
-        },
-        {
-          role: "assistant",
-          content: data.content,
-        },
-      ]);
-    } catch (err: any) {
-      console.error(err);
-      setError("Something went wrong while analyzing ingredients.");
-    } finally {
-      setAnalyzing(false);
-    }
-  };
-
-  // =========================
-  // FOLLOW-UP CHAT
-  // =========================
-  const sendFollowUp = async (message: string) => {
-    if (!conversation.length) return;
-
-    setAnalyzing(true);
-    setError(null);
-
-    try {
-      const response = await fetch(BACKEND_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: "system",
-              content:
-                "Continue the previous food analysis conversation. Be concise and do not repeat the full verdict.",
-            },
-            ...conversation.map((m) => ({
-              role: m.role,
-              content: m.content,
-            })),
-            {
-              role: "user",
-              content: message,
-            },
-          ],
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Follow-up failed");
-      }
-
-      const data = await response.json();
-
-      setConversation((prev) => [
-        ...prev,
-        { role: "user", content: message },
-        { role: "assistant", content: data.content },
-      ]);
+      const data: AnalysisResult = await response.json();
+      setResult(data.content);
+      return data.content;
     } catch (err) {
       console.error(err);
-      setError("Failed to send follow-up message.");
+      setError("Failed to analyze ingredients");
+      throw err;
     } finally {
-      setAnalyzing(false);
+      setLoading(false);
     }
   };
 
   return {
     analyzeIngredients,
-    sendFollowUp,
-    analyzing,
+    loading,
     result,
-    conversation,
     error,
   };
 }
+
 
