@@ -1,10 +1,5 @@
 import { useState } from "react";
 
-interface AnalysisResult {
-  role: "assistant";
-  content: string;
-}
-
 export function useIngredientAnalysis() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -46,9 +41,9 @@ Do not list ingredients.
         throw new Error("Backend error");
       }
 
-      const data: AnalysisResult = await response.json();
-      setResult(data.content);
-      return data.content;
+      const data = await response.json();
+      setResult(data.reply);
+      return data.reply;
     } catch (err) {
       console.error(err);
       setError("Failed to analyze ingredients");
@@ -65,5 +60,6 @@ Do not list ingredients.
     error,
   };
 }
+
 
 
