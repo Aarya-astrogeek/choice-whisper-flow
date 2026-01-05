@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { INGREDIENT_KNOWLEDGE } from "@/lib/ingredientKnowledge";
 
 export function useIngredientAnalysis() {
   const [loading, setLoading] = useState(false);
@@ -13,36 +14,36 @@ export function useIngredientAnalysis() {
     setError(null);
 
     try {
-     
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: [
-              {
-                role: "user",
-                content: `
-Product: ${productName || "Unknown"}
-Ingredients: ${ingredients}
+      const input = ingredients.toLowerCase();
+      const explanations: string[] = [];
 
-Explain what matters, trade-offs, and uncertainty.
-Do not list ingredients.
-                `,
-              },
-            ],
-          }),
+      Object.entries(INGREDIENT_KNOWLEDGE).forEach(
+        ([ingredient, explanation]) => {
+          if (input.includes(ingredient)) {
+            explanations.push(`• ${explanation}`);
+          }
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Backend error");
+      if (explanations.length === 0) {
+        const fallback =
+          "No known ingredients detected from the supported set. This product appears relatively simple based on the limited ingredient knowledge available.";
+        setResult(fallback);
+        return fallback;
       }
 
-      const data = await response.json();
-      setResult(data.reply);
-      return data.reply;
+      const finalResult = `
+Product: ${productName || "Unknown"}
+
+Key insights:
+${explanations.join("\n\n")}
+
+Overall note:
+Health impact depends on quantity, frequency, and individual sensitivity.
+      `.trim();
+
+      setResult(finalResult);
+      return finalResult;
     } catch (err) {
       console.error(err);
       setError("Failed to analyze ingredients");
@@ -59,6 +60,7 @@ Do not list ingredients.
     error,
   };
 }
+
 
 
 
