@@ -53,7 +53,7 @@ This keeps the interaction human, flexible, and low-friction, while still person
 Users provide minimal input via:
 - Text
 - Image
-
+-voice
 The system infers what the user likely cares about without requiring:
 - preference forms
 - filters
@@ -110,8 +110,8 @@ Choice Whisper Flow explores **new interaction paradigms** where AI removes comp
 
 ## Demo
 
-*Live App: [https://choice-whisper-flow.vercel.app/](https://choice-whisper-flow.vercel.app/)
-*Demo Video:https://drive.google.com/file/d/1LKzfENcCtSADMuKiztlPyT-QhsPXj4_r/view?usp=drive_link
+-Live App: [https://choice-whisper-flow.vercel.app/](https://choice-whisper-flow.vercel.app/)
+-Demo Video:https://drive.google.com/file/d/1LKzfENcCtSADMuKiztlPyT-QhsPXj4_r/view?usp=drive_link
 
 
 ---
