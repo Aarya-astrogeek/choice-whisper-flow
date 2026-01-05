@@ -8,6 +8,19 @@ export interface AnalysisResult {
   bottomLine: string;
 }
 
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
+
+export interface AnalysisSession {
+  ingredients: string;
+  productName?: string;
+  initialResult: AnalysisResult;
+  conversation: ConversationMessage[];
+}
+
 export interface DietaryProfile {
   id: string;
   user_id: string;
