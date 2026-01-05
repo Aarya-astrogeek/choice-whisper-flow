@@ -46,7 +46,7 @@ These signals are inferred from conversation, not selected from checkboxes.
 
 
 
-This keeps the interaction human, flexible, and low-friction, while still personalizing reasoning — aligning with the goal of using less data well rather than more data poorly
+This keeps the interaction human, flexible, and low-friction, while still personalizing reasoning aligning with the goal of using less data well rather than more data poorly
 ---
 
 ### Intent-First Interaction
