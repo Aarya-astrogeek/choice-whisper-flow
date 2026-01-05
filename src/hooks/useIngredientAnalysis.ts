@@ -13,8 +13,7 @@ export function useIngredientAnalysis() {
     setError(null);
 
     try {
-      const response = await fetch(
-        "https://backend-whisperflow.onrender.com/chat",
+     
         {
           method: "POST",
           headers: {
