@@ -1,73 +1,172 @@
-# Welcome to your Lovable project
+# Choice Whisper Flow
 
-## Project info
+AI-Native Ingredient Reasoning at Decision Time  
+Live App: https://choice-whisper-flow.vercel.app/
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Choice Whisper Flow rethinks how people understand food ingredients.  
+Instead of acting as a database, label scanner, or scoring tool, it behaves like a reasoning companion that explains ingredient information in a clear, decision-ready way.
 
-## How can I edit this code?
+This project prioritizes **experience, intent inference, and explanation quality** over data scale, scraping pipelines, or rigid interfaces.
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## Project Motivation
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Food labels are optimized for regulation, not human understanding.  
+Most existing tools overwhelm users with raw ingredient lists, scores, or dense databases.
 
-Changes made via Lovable will be committed automatically to this repo.
+Choice Whisper Flow answers a simpler, more human question:
 
-**Use your preferred IDE**
+**What actually matters here, and why?**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+The system explains:
+- Why certain ingredients are relevant
+- What trade-offs exist
+- Where uncertainty remains
+- What a reasonable takeaway is
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+No filters. No forms. No ingredient encyclopedias.
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Core Features
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Voice-First Ingredient Input
+Users can speak ingredients naturally using a built-in voice interface.  
+Speech is transcribed and directly injected into the analysis flow, reducing friction in real-world scenarios like shopping or cooking.
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Intent-First Interaction
+Users provide minimal input via:
+- Text
+- Voice
+- Image
 
-**Edit a file directly in GitHub**
+The system infers what the user likely cares about without requiring:
+- preference forms
+- filters
+- manual configuration
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+### Reasoning-Driven Output
+Instead of listing ingredients, the AI explains:
+- What stood out
+- Why it matters
+- Trade-offs involved
+- Known uncertainty
+- A concise bottom-line verdict
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This shifts the AI from a lookup tool to a reasoning interface.
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## UI Preview
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Home and Input Experience
+![Home Screen](./assets/ui-home.png)
 
-## How can I deploy this project?
+### Voice Ingredient Input
+![Voice Input](./assets/ui-voice.png)
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### Ingredient Analysis Result
+![Analysis Result](./assets/ui-analysis.png)
 
-## Can I connect a custom domain to my Lovable project?
+> Place screenshots inside an `/assets` folder at the root of the repository.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## How It Works (High Level)
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+1. User provides input via text, voice, or image
+2. The system infers intent from minimal context
+3. AI generates structured explanations instead of raw data
+4. Output focuses on clarity, reasoning, and decision support
+
+---
+
+## Architecture Overview
+
+
+
+Frontend
+└── React (Lovable-generated UI)
+├── Text Input Panel
+├── Voice Input Integration
+├── Image Upload Panel
+└── Result Explanation Cards
+
+Backend
+└── LLM-powered reasoning engine
+├── Context inference
+├── Explanation structuring
+└── Follow-up conversation handling
+
+
+
+No large-scale datasets.  
+No OCR optimization.  
+No scraping pipelines.
+
+---
+
+## Code Structure
+
+
+
+src/
+├── components/
+│   ├── AnalysisInput.tsx
+│   ├── TextInputPanel.tsx
+│   ├── ImageUploadPanel.tsx
+│   ├── ProductSearchPanel.tsx
+│   └── AnalysisResultCard.tsx
+├── pages/
+│   └── Index.tsx
+├── hooks/
+│   ├── useIngredientAnalysis.ts
+│   └── useAnalysisHistory.ts
+└── main.tsx
+
+`
+
+---
+
+## Running Locally
+
+### Requirements
+- Node.js 16+
+- LLM API key (e.g., Groq)
+
+
+
+## Why This Project Is Different
+
+This is not:
+
+* a database browser
+* an ingredient encyclopedia
+* a scoring or ranking system
+* AI layered on top of a traditional app
+
+Choice Whisper Flow explores **new interaction paradigms** where AI removes complexity instead of adding to it.
+
+---
+
+## Demo
+
+Live App: [https://choice-whisper-flow.vercel.app/](https://choice-whisper-flow.vercel.app/)
+Demo Video: Add link here
+
+
+---
+
+## Team
+
+Aarya Shisode and Ankit Sinha
+
+---
+
+
+
