@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { INGREDIENT_KNOWLEDGE } from "@/lib/ingredientKnowledge";
 
 export function useIngredientAnalysis() {
   const [loading, setLoading] = useState(false);
@@ -14,36 +13,33 @@ export function useIngredientAnalysis() {
     setError(null);
 
     try {
-      const input = ingredients.toLowerCase();
-      const explanations: string[] = [];
+      // ✅ LOCAL ANALYSIS (NO BACKEND, NO API)
+      const text = ingredients.toLowerCase();
 
-      Object.entries(INGREDIENT_KNOWLEDGE).forEach(
-        ([ingredient, explanation]) => {
-          if (input.includes(ingredient)) {
-            explanations.push(`• ${explanation}`);
-          }
-        }
-      );
+      let reply = "This product appears relatively safe.";
 
-      if (explanations.length === 0) {
-        const fallback =
-          "No known ingredients detected from the supported set. This product appears relatively simple based on the limited ingredient knowledge available.";
-        setResult(fallback);
-        return fallback;
+      if (text.includes("palm oil")) {
+        reply =
+          "Palm oil raises environmental concerns and may indicate heavy processing.";
       }
 
-      const finalResult = `
-Product: ${productName || "Unknown"}
+      if (text.includes("refined sugar")) {
+        reply =
+          "Refined sugar contributes little nutrition and may impact metabolic health.";
+      }
 
-Key insights:
-${explanations.join("\n\n")}
+      if (text.includes("emulsifier")) {
+        reply =
+          "Emulsifiers can affect gut health and usually indicate ultra-processed food.";
+      }
 
-Overall note:
-Health impact depends on quantity, frequency, and individual sensitivity.
-      `.trim();
+      if (text.includes("artificial flavor")) {
+        reply =
+          "Artificial flavors signal heavy processing and low ingredient transparency.";
+      }
 
-      setResult(finalResult);
-      return finalResult;
+      setResult(reply);
+      return reply;
     } catch (err) {
       console.error(err);
       setError("Failed to analyze ingredients");
@@ -60,6 +56,7 @@ Health impact depends on quantity, frequency, and individual sensitivity.
     error,
   };
 }
+
 
 
 
